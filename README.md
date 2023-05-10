@@ -1,2 +1,19 @@
-# ansible-role-bes-sbom-generator
-Ansbile role for generating Software Bill of Material for any project
+Role Name
+=========
+
+Ansible role for installing SBOM generator tool for any Project.
+
+Requirements
+------------
+
+- curl
+
+License
+-------
+
+Apache-2.0
+
+Author Information
+------------------
+
+[Be-Secure](https://github.com/Be-Secure)

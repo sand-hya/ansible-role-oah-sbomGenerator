@@ -1,0 +1,10 @@
+---
+
+- name: Checking installation
+  include: "tasks/oah-validate.yml"
+
+- name: Removing existing version
+  include: "tasks/oah-remove.yml"
+
+- name: Installing latest version with default Config
+  include: "tasks/oah-install.yml"

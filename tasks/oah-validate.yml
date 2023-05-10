@@ -1,0 +1,16 @@
+---
+
+- name: Validate Installation
+  stat:
+    path: "/opt/spdx-sbom-generator"
+  register: spdx_executable 
+
+- name: Report if file doesn't exist
+  fail:
+    msg: "sbom-spdx-generator file not found"
+  when: not spdx_executable.stat.exists
+
+- name: Spdx-generator installed
+  debug:
+    msg: sbom-spdx-generator is installed
+  when: spdx_executable.stat.exists
