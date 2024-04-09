@@ -1,21 +1,5 @@
----
-- name: Checking latest version
-  shell: 'curl -s https://api.github.com/repos/opensbom-generator/spdx-sbom-generator/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -1 | xargs'
-  register: update_link
+- name: Removing existing version
+  include_tasks: "tasks/oah-remove.yml"
 
-- name: Checking installation
-  include: "tasks/oah-validate.yml"
-  
-- name: Checking if latest version is installed
-  debug:
-    msg: "Latest version already installed"
-  when: '"{{update_link.stdout}}" == "{{release_link}}/{{latest}}"'
-
-- name: Updating to latest version
-  become: yes
-  unarchive:
-    src: "{{update_link.stdout}}"
-    dest: /opt/
-    remote_src: yes
-  when: '"{{update_link.stdout}}" != "{{release_link}}/{{latest}}"'
-  
+- name: Installing latest version with default Config
+  include_tasks: "tasks/oah-install.yml"

@@ -1,16 +1,19 @@
----
+- name: Set sbom_file_path from BESMAN_TOOL_PATH
+  set_fact:
+    spdx_sbom_path: "{{ lookup('env', 'BESMAN_TOOL_PATH') }}"
+  when:  lookup('env', 'BESMAN_TOOL_PATH') != ''
 
-- name: Validate Installation
+- name: Check if spdx-sbom-generator file exists
   stat:
-    path: "/opt/spdx-sbom-generator"
-  register: spdx_executable 
-
-- name: Report if file doesn't exist
-  fail:
-    msg: "sbom-spdx-generator file not found"
-  when: not spdx_executable.stat.exists
+    path: "{{ spdx_sbom_path }}/spdx-sbom-generator"
+  register: sbom_file_path
+  
+- name: Display file existence status
+  debug:
+    msg: "spdx-sbom-generator is not installed"
+  when: not sbom_file_path.stat.exists
 
 - name: Spdx-generator installed
   debug:
     msg: sbom-spdx-generator is installed
-  when: spdx_executable.stat.exists
+  when: sbom_file_path.stat.exists

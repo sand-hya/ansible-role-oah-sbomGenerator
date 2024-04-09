@@ -1,4 +1,22 @@
----
+- name: Set sbom_file_path from BESMAN_TOOL_PATH
+  set_fact:
+    spdx_sbom_path: "{{ lookup('env', 'BESMAN_TOOL_PATH') }}"
+  when:  lookup('env', 'BESMAN_TOOL_PATH') != ''
+
+- name: Check if spdx-sbom-generator file exists
+  stat:
+    path: "{{ spdx_sbom_path }}/spdx-sbom-generator"
+  register: sbom_file_path
+
+- name: Display file existence status
+  debug:
+    msg: "spdx-sbom-generator file exists at {{ sbom_file_path.stat.path }}"
+  when: sbom_file_path.stat.exists
+
+- name: Exit if file exists
+  fail:
+    msg: "spdx-sbom-generator file already exists. Exiting role execution."
+  when: sbom_file_path.stat.exists
 
 - name: Checking curl installation
   become: yes
@@ -6,14 +24,9 @@
     name: curl
     state: present
 
-- name: Checking the latest version
-  become: yes
-  shell: 'curl -s https://api.github.com/repos/opensbom-generator/spdx-sbom-generator/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \" | head -1 | xargs'
-  register: latest_version
-
 - name: Download and Extract spdx-generator tool
   become: yes
   unarchive:
-    src: "{{ latest_version.stdout }}"
-    dest: /opt/
+    src: "{{ spdx_sbom_download_url }}/{{ spdx_sbom_version }}/spdx-sbom-generator-{{ spdx_sbom_version }}-linux-amd64.tar.gz"
+    dest: "{{ spdx_sbom_path }}"
     remote_src: yes
