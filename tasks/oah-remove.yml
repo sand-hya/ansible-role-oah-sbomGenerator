@@ -8,9 +8,9 @@
     path: "{{ spdx_sbom_path }}/spdx-sbom-generator"
   register: sbom_file_path
 
-- name: Display file existence status
-  fail:
-    msg: "spdx-sbom-generator is not installed"
+- name: Display message
+  debug:
+    msg: spdx-sbom-generator is not installed
   when: not sbom_file_path.stat.exists
 
 - name: Removing spdx-generator

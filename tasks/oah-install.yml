@@ -13,20 +13,18 @@
     msg: "spdx-sbom-generator file exists at {{ sbom_file_path.stat.path }}"
   when: sbom_file_path.stat.exists
 
-- name: Exit if file exists
-  fail:
-    msg: "spdx-sbom-generator file already exists. Exiting role execution."
-  when: sbom_file_path.stat.exists
+- name: Installing spdx-sbom-generator
+  block:
+    - name: Checking curl installation
+      become: yes
+      apt:
+        name: curl
+        state: present
 
-- name: Checking curl installation
-  become: yes
-  apt:
-    name: curl
-    state: present
-
-- name: Download and Extract spdx-generator tool
-  become: yes
-  unarchive:
-    src: "{{ spdx_sbom_download_url }}/{{ spdx_sbom_version }}/spdx-sbom-generator-{{ spdx_sbom_version }}-linux-amd64.tar.gz"
-    dest: "{{ spdx_sbom_path }}"
-    remote_src: yes
+    - name: Download and Extract spdx-generator tool
+      become: yes
+      unarchive:
+        src: "{{ spdx_sbom_download_url }}/{{ spdx_sbom_version }}/spdx-sbom-generator-{{ spdx_sbom_version }}-linux-amd64.tar.gz"
+        dest: "{{ spdx_sbom_path }}"
+        remote_src: yes
+  when: not sbom_file_path.stat.exists
